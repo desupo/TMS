@@ -9,7 +9,7 @@ namespace TMS.host.Controllers;
 [Route("[controller]")]
 public class EventsController(IMediator mediator) : ControllerBase
 {
-   private readonly IMediator _mediator = mediator;
+    private readonly IMediator _mediator = mediator;
     [HttpPost("upload")]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> UploadEventsAsync([FromForm] UploadEventRequest request)

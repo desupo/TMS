@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TMS.application.DTOs;
 using TMS.host.Queries;
 
 namespace TMS.host.Controllers;
@@ -6,6 +7,7 @@ namespace TMS.host.Controllers;
 public class TripsController : BaseApiController
 {
     [HttpGet("{id:long}")]
+    [ProducesResponseType(typeof(TripDetailsDto), 200)]
     public async Task<IActionResult> GetTrip(long id)
     {
         var query = new GetTripDetailsQuery { TripId = id };
@@ -20,6 +22,7 @@ public class TripsController : BaseApiController
     }
 
     [HttpGet("equipment/{equipmentId}")]
+    [ProducesResponseType(typeof(List<TripDetailsDto>), 200)]
     public async Task<IActionResult> GetTripsByEquipmentId(string equipmentId)
     {
         var query = new GetTripsByEquipmentIdQuery { EquipmentId = equipmentId };
@@ -34,6 +37,7 @@ public class TripsController : BaseApiController
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(List<TripDetailsDto>), 200)]
     public async Task<IActionResult> GetAllTrips()
     {
         var query = new GetAllTripsQuery();

@@ -21,7 +21,7 @@ public class TripService : ITripService
             var trip = await _context.Trips
             .Include(t => t.Origin_City)
             .Include(t => t.Destination_City)
-            .Include(t => t.Events)
+            .Include(t => t.Events).ThenInclude(x => x.City)
             .FirstOrDefaultAsync(t => t.Id == tripId);
 
             if (trip == null)
@@ -31,15 +31,21 @@ public class TripService : ITripService
 
             var tripDetails = new TripDetailsDto
             {
+                TripId = trip.Id,
                 EquipmentId = trip.EquipmentId,
                 OriginCity = trip.Origin_City.Name,
                 DestinationCity = trip.Destination_City.Name,
-                StartDate = trip.Start_Date,
-                EndDate = trip.End_Date,
-                Duration = trip.Duration,
-                HasIssue = trip.HasIssue,
-                Completed = trip.Completed,
-                Events = trip.Events.OrderBy(e => e.EventDate).ToList()
+                StartDateUtc = trip.Start_Date.UtcDateTime,
+                EndDateUtc = trip.End_Date.UtcDateTime,
+                TotalHours = trip.Duration.TotalHours,
+                //HasIssue = trip.HasIssue,
+                //Completed = trip.Completed,
+                Events = trip.Events.OrderBy(e => e.EventDate).Select(x => new RailcarEventModel
+                {
+                    EventCode = x.Code,
+                    EventTimeUtc = x.EventDate.UtcDateTime,
+                    City = x.City.Name,
+                }).ToList()
             };
             return tripDetails;
         }
@@ -54,6 +60,7 @@ public class TripService : ITripService
         var trips = await _context.Trips
             .Include(t => t.Origin_City)
             .Include(t => t.Destination_City)
+            .Include(t => t.Events).ThenInclude(x => x.City)
             .Where(t => t.EquipmentId == equipmentId)
             .ToListAsync();
 
@@ -62,12 +69,17 @@ public class TripService : ITripService
             EquipmentId = trip.EquipmentId,
             OriginCity = trip.Origin_City.Name,
             DestinationCity = trip.Destination_City.Name,
-            StartDate = trip.Start_Date,
-            EndDate = trip.End_Date,
-            Duration = trip.Duration,
-            HasIssue = trip.HasIssue,
-            Completed = trip.Completed,
-            Events = trip.Events.OrderBy(e => e.EventDate).ToList()
+            StartDateUtc = trip.Start_Date.UtcDateTime,
+            EndDateUtc = trip.End_Date.UtcDateTime,
+            TotalHours = trip.Duration.TotalHours,
+            //HasIssue = trip.HasIssue,
+            //Completed = trip.Completed,
+            Events = trip.Events.OrderBy(e => e.EventDate).Select(x => new RailcarEventModel
+            {
+                EventCode = x.Code,
+                EventTimeUtc = x.EventDate.UtcDateTime,
+                City = x.City.Name,
+            }).ToList()
         }).ToList();
     }
 
@@ -76,6 +88,7 @@ public class TripService : ITripService
         var trips = await _context.Trips
             .Include(t => t.Origin_City)
             .Include(t => t.Destination_City)
+            .Include(t => t.Events).ThenInclude(x => x.City)
             .ToListAsync();
 
         return trips.Select(trip => new TripDetailsDto
@@ -83,12 +96,17 @@ public class TripService : ITripService
             EquipmentId = trip.EquipmentId,
             OriginCity = trip.Origin_City.Name,
             DestinationCity = trip.Destination_City.Name,
-            StartDate = trip.Start_Date,
-            EndDate = trip.End_Date,
-            Duration = trip.Duration,
-            HasIssue = trip.HasIssue,
-            Completed = trip.Completed,
-            Events = trip.Events.OrderBy(e => e.EventDate).ToList()
+            StartDateUtc = trip.Start_Date.UtcDateTime,
+            EndDateUtc = trip.End_Date.UtcDateTime,
+            TotalHours = trip.Duration.TotalHours,
+            //HasIssue = trip.HasIssue,
+            //Completed = trip.Completed,
+            Events = trip.Events.OrderBy(e => e.EventDate).Select(x => new RailcarEventModel
+            {
+                EventCode = x.Code,
+                EventTimeUtc = x.EventDate.UtcDateTime,
+                City = x.City.Name,
+            }).ToList()
         }).ToList();
 
     }
