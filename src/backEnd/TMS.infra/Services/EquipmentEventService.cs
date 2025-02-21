@@ -1,25 +1,17 @@
 ﻿using CsvHelper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TMS.application.DTOs;
 using TMS.application.Interfaces;
 using TMS.domain.Entities;
-using TMS.infra.Interfaces;
 using TMS.infra.Persistence.Context;
 
 namespace TMS.infra.Services;
 
-public class EquipmentEventService(dbContext context, ITripRepo tripRepo, ILogger<EquipmentEventService> logger) : IEquipmentEventService
+public class EquipmentEventService(dbContext context, ILogger<EquipmentEventService> logger) : IEquipmentEventService
 {
     private readonly dbContext _context = context ?? throw new ArgumentNullException(nameof(context));
-    private readonly ITripRepo _tripRepo = tripRepo ?? throw new ArgumentNullException(nameof(tripRepo));
+
     private readonly ILogger<EquipmentEventService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<IEnumerable<Event>> ParseCsvAsync(IFormFile file)

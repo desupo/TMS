@@ -1,7 +1,7 @@
-
-using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+using TMS.host;
 using TMS.infra;
-using TMS.infra.Persistence.Context;
 
 var SwaggerVersion = "v1";
 
@@ -14,7 +14,15 @@ IConfiguration config = builder.Configuration;
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.EnableAnnotations();
+    c.OrderActionsBy(apiDesc => $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{apiDesc.RelativePath}");
+    c.OperationFilter<SwaggerFileOperationFilter>();
+
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "AltaGas TMS", Version = "v1" });
+    c.CustomSchemaIds(type => type.FullName);
+});
 
 //Register services in Infrastructure layer including the persistence (database)
 builder.Services.AddInfrastructure(config);
