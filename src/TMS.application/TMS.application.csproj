@@ -20,7 +20,6 @@
     <Folder Include="Commands\" />
     <Folder Include="Repositories\" />
     <Folder Include="Responses\" />
-    <Folder Include="Queries\" />
   </ItemGroup>
 
 </Project>

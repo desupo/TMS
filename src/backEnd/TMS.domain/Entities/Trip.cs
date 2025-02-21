@@ -25,4 +25,6 @@ public class Trip : BaseEntity<long>
     public virtual City Origin_City { get; set; }
 
     public virtual City Destination_City { get; set; }
+
+    public virtual ICollection<Event> Events { get; set; } = new HashSet<Event>();
 }

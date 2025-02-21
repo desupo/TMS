@@ -5,9 +5,7 @@ namespace TMS.application.Interfaces;
 
 public interface IEquipmentEventService
 {
-    Task ProcessEventsAsync(Stream csvStream);
     Task ProcessEventsAsync(IEnumerable<Event> events);
-    Task<IEnumerable<Trip>> GetTripsAsync();
-    Task<IEnumerable<EquipmentEvent>> GetEventsByTripIdAsync(long tripId);
+    Task ProcessEvents(IEnumerable<Event> events);
     Task<IEnumerable<Event>> ParseCsvAsync(IFormFile file);
 }

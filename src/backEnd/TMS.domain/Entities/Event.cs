@@ -9,4 +9,7 @@ public class Event : BaseEntity
     public DateTimeOffset EventDate { get; set; }
     public int CityId { get; set; }
     public virtual City City { get; set; }
+
+    public long TripId { get; set; }
+    public virtual Trip Trip { get; set; }
 }

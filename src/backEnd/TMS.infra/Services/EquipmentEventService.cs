@@ -16,170 +16,228 @@ using TMS.infra.Persistence.Context;
 
 namespace TMS.infra.Services;
 
-public class EquipmentEventService(dbContext context, ITripRepo tripRepo) : IEquipmentEventService
+public class EquipmentEventService(dbContext context, ITripRepo tripRepo, ILogger<EquipmentEventService> logger) : IEquipmentEventService
 {
     private readonly dbContext _context = context ?? throw new ArgumentNullException(nameof(context));
     private readonly ITripRepo _tripRepo = tripRepo ?? throw new ArgumentNullException(nameof(tripRepo));
+    private readonly ILogger<EquipmentEventService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<IEnumerable<Event>> ParseCsvAsync(IFormFile file)
     {
         var events = new List<Event>();
-
-        using (var stream = new StreamReader(file.OpenReadStream()))
-        using (var csv = new CsvReader(stream, CultureInfo.InvariantCulture))
+        try
         {
-            var csvRecords = csv.GetRecords<Event>().ToList();
-            foreach (var record in csvRecords)
+            using (var stream = new StreamReader(file.OpenReadStream()))
+            using (var csv = new CsvReader(stream, CultureInfo.InvariantCulture))
             {
-                var city = await _context.Cities.FindAsync(record.CityId);
-                if (city != null)
+                var csvRecords = csv.GetRecords<Event>().ToList();
+                foreach (var record in csvRecords)
                 {
-                    var eventTimeZone = TimeZoneInfo.FindSystemTimeZoneById(city.TimeZone);
-                    record.EventDate = TimeZoneInfo.ConvertTimeToUtc(record.EventDate.DateTime, eventTimeZone);
+                    var city = await _context.Cities.FindAsync(record.CityId);
+                    if (city != null)
+                    {
+                        var eventTimeZone = TimeZoneInfo.FindSystemTimeZoneById(city.TimeZone);
+                        record.EventDate = TimeZoneInfo.ConvertTimeToUtc(record.EventDate.DateTime, eventTimeZone);
+                    }
+                    events.Add(record);
                 }
-                events.Add(record);
             }
         }
+        catch (Exception)
+        {
+
+
+        }
+
         return events;
     }
 
     public async Task ProcessEventsAsync(IEnumerable<Event> events)
     {
-        var groupedEvents = events.GroupBy(e => e.EquipmentId);
-
-        foreach (var group in groupedEvents)
+        try
         {
-            var equipmentId = group.Key;
-            var eventList = group.OrderBy(e => e.EventDate).ToList();
-            Trip currentTrip = null;
+            var groupedEvents = events.GroupBy(e => e.EquipmentId);
 
-            for (int i = 0; i < eventList.Count; i++)
+            foreach (var group in groupedEvents)
             {
-                var eventEntity = eventList[i];
+                var equipmentId = group.Key;
+                var eventList = group.OrderBy(e => e.EventDate).ToList();
+                Trip currentTrip = null;
+                Event startEvent = null;
 
-                if (eventEntity.Code == "W")
+                for (int i = 0; i < eventList.Count; i++)
                 {
-                    if (currentTrip == null)
+                    var eventEntity = eventList[i];
+
+                    if (eventEntity.Code == "W")
                     {
-                        currentTrip = new Trip
+                        if (currentTrip == null)
                         {
-                            EquipmentId = equipmentId,
-                            Origin_CityId = eventEntity.CityId,
-                            Start_Date = eventEntity.EventDate,
-                            HasIssue = false,
-                            Completed = false
-                        };
-                    }
-                    else
-                    {
-                        // Misplaced code, flag the trip with an issue
-                        currentTrip.HasIssue = true;
-                    }
-                }
-                else if (eventEntity.Code == "Z")
-                {
-                    if (currentTrip != null)
-                    {
-                        currentTrip.Destination_CityId = eventEntity.CityId;
-                        currentTrip.End_Date = eventEntity.EventDate;
-                        currentTrip.Completed = true;
-                        _context.Trips.Add(currentTrip);
-                        currentTrip = null;
-                    }
-                    else
-                    {
-                        // Misplaced code, flag as issue
-                        if (i == 0 || eventList[i - 1].Code != "Z")
-                        {
+                            // Capture the start event for the trip
+                            startEvent = eventEntity;
                             currentTrip = new Trip
                             {
                                 EquipmentId = equipmentId,
                                 Origin_CityId = eventEntity.CityId,
                                 Start_Date = eventEntity.EventDate,
-                                HasIssue = true,
-                                Completed = false
+                                HasIssue = false,
+                                Completed = false,
+                                Events = new List<Event> { eventEntity }
                             };
+                            eventEntity.Trip = currentTrip;
+                        }
+                        else
+                        {
+                            // Misplaced code, flag the trip with an issue
+                            currentTrip.HasIssue = true;
+                        }
+                    }
+                    else if (eventEntity.Code == "Z")
+                    {
+                        if (currentTrip != null)
+                        {
+                            currentTrip.Destination_CityId = eventEntity.CityId;
+                            currentTrip.End_Date = eventEntity.EventDate;
+                            currentTrip.Completed = true;
+                            currentTrip.Events.Add(eventEntity);
+                            eventEntity.Trip = currentTrip;
+                            _context.Trips.Add(currentTrip);
+                            currentTrip = null;
+                        }
+                        else
+                        {
+                            // Misplaced code, handle the abnormal sequence
+                            startEvent = eventList.FirstOrDefault(e => e.EventDate < eventEntity.EventDate);
+                            if (startEvent != null)
+                            {
+                                currentTrip = new Trip
+                                {
+                                    EquipmentId = equipmentId,
+                                    Origin_CityId = startEvent.CityId,
+                                    Start_Date = startEvent.EventDate,
+                                    Destination_CityId = eventEntity.CityId,
+                                    End_Date = eventEntity.EventDate,
+                                    HasIssue = true,
+                                    Completed = true,
+                                    Events = new List<Event> { startEvent, eventEntity }
+                                };
+                                startEvent.Trip = currentTrip;
+                                eventEntity.Trip = currentTrip;
+                                _context.Trips.Add(currentTrip);
+                                currentTrip = null;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Intermediate events; ensure there's a current trip
+                        if (currentTrip != null)
+                        {
+                            currentTrip.Events.Add(eventEntity);
+                            eventEntity.Trip = currentTrip;
                         }
                     }
                 }
-            }
 
-            if (currentTrip != null && !currentTrip.Completed)
-            {
-                // Trip ended without a matching "Z" code
-                currentTrip.HasIssue = true;
-                _context.Trips.Add(currentTrip);
-            }
-        }
-
-        await _context.SaveChangesAsync();
-    }
-    public async Task ProcessEventsAsync(IEnumerable<EquipmentEvent> events)
-    {
-        var trips = new List<Trip>();
-        Trip currentTrip = null;
-
-        foreach (var evt in events.OrderBy(e => e.EventTime))
-        {
-            if (evt.EventCode == "W")
-            {
-                if (currentTrip != null)
+                if (currentTrip != null && !currentTrip.Completed)
                 {
+                    // Trip ended without a matching "Z" code
                     currentTrip.HasIssue = true;
-                    trips.Add(currentTrip);
+                    _context.Trips.Add(currentTrip);
                 }
-                currentTrip = new Trip
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "An error occurred while processing events.");
+            throw;
+        }
+
+    }
+    public async Task ProcessEvents(IEnumerable<Event> events)
+    {
+        try
+        {
+            // Convert event times to UTC and sort by event time
+            var sortedEvents = events
+                .Select(e => new Event
                 {
-                    EquipmentId = evt.EquipmentId,
-                    Origin_CityId = evt.CityId,
-                    Start_Date = evt.EventTime,
-                    Completed = false
-                };
-            }
-            else if (evt.EventCode == "Z" && currentTrip != null)
+                    EquipmentId = e.EquipmentId,
+                    Code = e.Code,
+                    EventDate = ConvertToUtc(e.EventDate, e.CityId), // Convert to UTC
+                    CityId = e.CityId
+                })
+                .OrderBy(e => e.EventDate)
+                .ToList();
+
+            var trips = new List<Trip>();
+            Trip currentTrip = null;
+
+            foreach (var evt in sortedEvents)
             {
-                currentTrip.Destination_CityId = evt.CityId;
-                currentTrip.End_Date = evt.EventTime;
-                //currentTrip.Duration = currentTrip.End_Date - currentTrip.Start_Date;
-                currentTrip.Completed = true;
-                trips.Add(currentTrip);
-                currentTrip = null;
+                if (evt.Code == "W") // Start of a new trip
+                {
+                    if (currentTrip != null)
+                    {
+                        // If a new trip starts without the previous trip ending, mark it as incomplete
+                        currentTrip.HasIssue = true;
+                        trips.Add(currentTrip);
+                    }
+
+                    currentTrip = new Trip
+                    {
+                        EquipmentId = evt.EquipmentId,
+                        Origin_CityId = evt.CityId,
+                        Start_Date = evt.EventDate,
+                        Completed = false
+                    };
+                }
+                else if (evt.Code == "Z" && currentTrip != null) // End of the current trip
+                {
+                    currentTrip.Destination_CityId = evt.CityId;
+                    currentTrip.End_Date = evt.EventDate;
+                    // currentTrip.Duration = currentTrip.End_Date - currentTrip.Start_Date;
+                    currentTrip.Completed = true;
+                    trips.Add(currentTrip);
+                    currentTrip = null; // Reset for the next trip
+                }
+                else if (currentTrip != null)
+                {
+                    // Events between W and Z are part of the current trip
+                    // No action needed here unless you want to track intermediate events
+                }
             }
-            else if (currentTrip != null)
+
+            // If there's an incomplete trip at the end, add it to the list
+            if (currentTrip != null)
             {
                 currentTrip.HasIssue = true;
+                trips.Add(currentTrip);
             }
-        }
 
-        if (currentTrip != null)
+            // Save trips to the database
+            _context.Trips.AddRange(trips);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
         {
-            trips.Add(currentTrip);
+            _logger.LogError(e, "An error occurred while processing events.");
+            throw;
         }
 
-        _context.Trips.AddRange(trips);
-        await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<Trip>> GetTripsAsync()
+    private DateTimeOffset ConvertToUtc(DateTimeOffset eventTime, int cityId)
     {
-        return await _context.Trips.ToListAsync();
-    }
-
-    public async Task<IEnumerable<EquipmentEvent>> GetEventsByTripIdAsync(long tripId)
-    {
-        var trip = await _context.Trips
-            .Include(t => t.Origin_City)
-            .Include(t => t.Destination_City)
-            .FirstOrDefaultAsync(t => t.Id == tripId);
-
-        if (trip == null)
+        var city = _context.Cities.Find(cityId);
+        if (city == null)
         {
-            return Enumerable.Empty<EquipmentEvent>();
+            throw new InvalidOperationException($"City with ID {cityId} not found.");
         }
 
-        return await _context.EquipmentEvents
-            .Where(e => e.EquipmentId == trip.EquipmentId && e.EventTime >= trip.Start_Date && e.EventTime <= trip.End_Date)
-            .OrderBy(e => e.EventTime)
-            .ToListAsync();
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(city.TimeZone);
+        return TimeZoneInfo.ConvertTimeToUtc(eventTime.DateTime, timeZone);
     }
 }

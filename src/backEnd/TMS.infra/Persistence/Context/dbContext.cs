@@ -18,6 +18,7 @@ public class dbContext : DbContext
     //Entities
     public DbSet<City> Cities { get; set; }
     public DbSet<Event_Code> Event_Codes { get; set; }
+    public DbSet<Event> Events { get; set; }
     public DbSet<Trip> Trips { get; set; }
 
     public dbContext(DbContextOptions<dbContext> options) : base(options) { }
@@ -32,6 +33,7 @@ public class dbContext : DbContext
         //Apply the configurations
         builder.ApplyConfiguration(new City_Config());
         builder.ApplyConfiguration(new Event_Code_Config());
+        builder.ApplyConfiguration(new Event_Config());
         builder.ApplyConfiguration(new Trip_Config());
 
         base.OnModelCreating(builder);
@@ -43,7 +45,8 @@ public class dbContext : DbContext
     /// Seed that City and Event Code data. This will happen once
     /// </summary>
     /// <param name="builder"></param>
-    private void SeedData(ModelBuilder builder) {
+    private void SeedData(ModelBuilder builder)
+    {
         // Get the path to the CSV files in the Infrastructure layer
         var seedDataFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Data", "SeedData");
 

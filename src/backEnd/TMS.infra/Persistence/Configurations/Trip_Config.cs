@@ -1,14 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TMS.domain.Entities;
 
 namespace TMS.infra.Persistence.Configurations;
-
 public class Trip_Config : BaseEntityConfiguration<Trip, long>
 {
     public override void Configure(EntityTypeBuilder<Trip> builder)
@@ -28,7 +22,7 @@ public class Trip_Config : BaseEntityConfiguration<Trip, long>
 
         builder.Property(t => t.End_Date)
             .IsRequired();
-        
+
         builder.HasOne(t => t.Origin_City)
             .WithMany(c => c.Start_Cities)
             .HasForeignKey(t => t.Origin_CityId)
