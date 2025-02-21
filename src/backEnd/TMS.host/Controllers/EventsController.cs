@@ -5,9 +5,7 @@ using TMS.host.Commands;
 
 namespace TMS.host.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-public class EventsController(IMediator mediator) : ControllerBase
+public class EventsController(IMediator mediator) : BaseApiController
 {
     private readonly IMediator _mediator = mediator;
     [HttpPost("upload")]

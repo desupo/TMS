@@ -25,7 +25,19 @@
     <div class="alert alert-danger">@errorMessage</div>
 }
 <!-- Trips Grid -->
-@if (trips != null)
+@if (IsLoading)
 {
-    <TripsGrid trips="@trips" ViewTripEvents="@ViewTripEvents" />
+    <div class="alert alert-info">
+        <i class="fas fa-spinner fa-spin"></i> Loading trips...
+    </div>
+}
+else if (trips != null)
+{
+    <TripsGrid trips="@trips" OnViewTripDetailAsync="@ViewTripEvents" />
+}
+else
+{
+    <div class="alert alert-info">
+        No trips to display.
+    </div>
 }

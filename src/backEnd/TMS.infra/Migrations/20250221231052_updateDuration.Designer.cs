@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TMS.infra.Persistence.Context;
 
@@ -10,9 +11,11 @@ using TMS.infra.Persistence.Context;
 namespace tms.infra.Migrations
 {
     [DbContext(typeof(dbContext))]
-    partial class dbContextModelSnapshot : ModelSnapshot
+    [Migration("20250221231052_updateDuration")]
+    partial class updateDuration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.13");
@@ -50,343 +53,343 @@ namespace tms.infra.Migrations
                         new
                         {
                             Id = 1,
-                            Date_Created = "2025-02-21T23:23:49.6482628+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3070845+00:00",
                             Name = "Vancouver",
                             TimeZone = "Pacific Standard Time"
                         },
                         new
                         {
                             Id = 2,
-                            Date_Created = "2025-02-21T23:23:49.6482938+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071043+00:00",
                             Name = "Victoria",
                             TimeZone = "Pacific Standard Time"
                         },
                         new
                         {
                             Id = 3,
-                            Date_Created = "2025-02-21T23:23:49.6482993+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071103+00:00",
                             Name = "Kelowna",
                             TimeZone = "Pacific Standard Time"
                         },
                         new
                         {
                             Id = 4,
-                            Date_Created = "2025-02-21T23:23:49.6483044+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071148+00:00",
                             Name = "Kamloops",
                             TimeZone = "Pacific Standard Time"
                         },
                         new
                         {
                             Id = 5,
-                            Date_Created = "2025-02-21T23:23:49.6483096+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071192+00:00",
                             Name = "Prince George",
                             TimeZone = "Pacific Standard Time"
                         },
                         new
                         {
                             Id = 6,
-                            Date_Created = "2025-02-21T23:23:49.6483159+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071238+00:00",
                             Name = "Calgary",
                             TimeZone = "Mountain Standard Time"
                         },
                         new
                         {
                             Id = 7,
-                            Date_Created = "2025-02-21T23:23:49.6483209+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071278+00:00",
                             Name = "Edmonton",
                             TimeZone = "Mountain Standard Time"
                         },
                         new
                         {
                             Id = 8,
-                            Date_Created = "2025-02-21T23:23:49.6483259+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071323+00:00",
                             Name = "Lethbridge",
                             TimeZone = "Mountain Standard Time"
                         },
                         new
                         {
                             Id = 9,
-                            Date_Created = "2025-02-21T23:23:49.6483305+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071366+00:00",
                             Name = "Red Deer",
                             TimeZone = "Mountain Standard Time"
                         },
                         new
                         {
                             Id = 10,
-                            Date_Created = "2025-02-21T23:23:49.6483362+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071416+00:00",
                             Name = "Fort McMurray",
                             TimeZone = "Mountain Standard Time"
                         },
                         new
                         {
                             Id = 11,
-                            Date_Created = "2025-02-21T23:23:49.6483413+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071463+00:00",
                             Name = "Regina",
                             TimeZone = "Canada Central Standard Time"
                         },
                         new
                         {
                             Id = 12,
-                            Date_Created = "2025-02-21T23:23:49.6483467+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071510+00:00",
                             Name = "Saskatoon",
                             TimeZone = "Canada Central Standard Time"
                         },
                         new
                         {
                             Id = 13,
-                            Date_Created = "2025-02-21T23:23:49.6483522+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071557+00:00",
                             Name = "Moose Jaw",
                             TimeZone = "Canada Central Standard Time"
                         },
                         new
                         {
                             Id = 14,
-                            Date_Created = "2025-02-21T23:23:49.6483573+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071599+00:00",
                             Name = "Brandon",
                             TimeZone = "Central Standard Time"
                         },
                         new
                         {
                             Id = 15,
-                            Date_Created = "2025-02-21T23:23:49.6483622+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071642+00:00",
                             Name = "Winnipeg",
                             TimeZone = "Central Standard Time"
                         },
                         new
                         {
                             Id = 16,
-                            Date_Created = "2025-02-21T23:23:49.6483672+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071688+00:00",
                             Name = "Thunder Bay",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 17,
-                            Date_Created = "2025-02-21T23:23:49.6483726+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071734+00:00",
                             Name = "Sault Ste. Marie",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 18,
-                            Date_Created = "2025-02-21T23:23:49.6483803+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071808+00:00",
                             Name = "Sudbury",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 19,
-                            Date_Created = "2025-02-21T23:23:49.6483854+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071852+00:00",
                             Name = "North Bay",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 20,
-                            Date_Created = "2025-02-21T23:23:49.6483903+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071892+00:00",
                             Name = "Barrie",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 21,
-                            Date_Created = "2025-02-21T23:23:49.6483952+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071933+00:00",
                             Name = "Toronto",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 22,
-                            Date_Created = "2025-02-21T23:23:49.6484004+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3071976+00:00",
                             Name = "Mississauga",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 23,
-                            Date_Created = "2025-02-21T23:23:49.6484052+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072021+00:00",
                             Name = "Hamilton",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 24,
-                            Date_Created = "2025-02-21T23:23:49.6484100+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072060+00:00",
                             Name = "London",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 25,
-                            Date_Created = "2025-02-21T23:23:49.6484150+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072102+00:00",
                             Name = "Kitchener",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 26,
-                            Date_Created = "2025-02-21T23:23:49.6484197+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072143+00:00",
                             Name = "Windsor",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 27,
-                            Date_Created = "2025-02-21T23:23:49.6484249+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072185+00:00",
                             Name = "St. Catharines",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 28,
-                            Date_Created = "2025-02-21T23:23:49.6484296+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072225+00:00",
                             Name = "Oshawa",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 29,
-                            Date_Created = "2025-02-21T23:23:49.6484344+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072264+00:00",
                             Name = "Kingston",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 30,
-                            Date_Created = "2025-02-21T23:23:49.6484391+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072302+00:00",
                             Name = "Ottawa",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 31,
-                            Date_Created = "2025-02-21T23:23:49.6484440+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072344+00:00",
                             Name = "Gatineau",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 32,
-                            Date_Created = "2025-02-21T23:23:49.6484488+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072382+00:00",
                             Name = "Montreal",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 33,
-                            Date_Created = "2025-02-21T23:23:49.6484538+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072423+00:00",
                             Name = "Quebec City",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 34,
-                            Date_Created = "2025-02-21T23:23:49.6484590+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072471+00:00",
                             Name = "Sherbrooke",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 35,
-                            Date_Created = "2025-02-21T23:23:49.6484644+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072513+00:00",
                             Name = "Trois-Rivières",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 36,
-                            Date_Created = "2025-02-21T23:23:49.6484693+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072558+00:00",
                             Name = "Saguenay",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 37,
-                            Date_Created = "2025-02-21T23:23:49.6484739+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072602+00:00",
                             Name = "Rimouski",
                             TimeZone = "Eastern Standard Time"
                         },
                         new
                         {
                             Id = 38,
-                            Date_Created = "2025-02-21T23:23:49.6484809+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072667+00:00",
                             Name = "Edmundston",
                             TimeZone = "Atlantic Standard Time"
                         },
                         new
                         {
                             Id = 39,
-                            Date_Created = "2025-02-21T23:23:49.6484861+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072711+00:00",
                             Name = "Fredericton",
                             TimeZone = "Atlantic Standard Time"
                         },
                         new
                         {
                             Id = 40,
-                            Date_Created = "2025-02-21T23:23:49.6484911+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072750+00:00",
                             Name = "Moncton",
                             TimeZone = "Atlantic Standard Time"
                         },
                         new
                         {
                             Id = 41,
-                            Date_Created = "2025-02-21T23:23:49.6484964+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072788+00:00",
                             Name = "Saint John",
                             TimeZone = "Atlantic Standard Time"
                         },
                         new
                         {
                             Id = 42,
-                            Date_Created = "2025-02-21T23:23:49.6485015+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072832+00:00",
                             Name = "Bathurst",
                             TimeZone = "Atlantic Standard Time"
                         },
                         new
                         {
                             Id = 43,
-                            Date_Created = "2025-02-21T23:23:49.6485068+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072882+00:00",
                             Name = "Charlottetown",
                             TimeZone = "Atlantic Standard Time"
                         },
                         new
                         {
                             Id = 44,
-                            Date_Created = "2025-02-21T23:23:49.6485120+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072928+00:00",
                             Name = "Summerside",
                             TimeZone = "Atlantic Standard Time"
                         },
                         new
                         {
                             Id = 45,
-                            Date_Created = "2025-02-21T23:23:49.6485167+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3072971+00:00",
                             Name = "Sydney",
                             TimeZone = "Atlantic Standard Time"
                         },
                         new
                         {
                             Id = 46,
-                            Date_Created = "2025-02-21T23:23:49.6485215+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3073010+00:00",
                             Name = "Truro",
                             TimeZone = "Atlantic Standard Time"
                         },
                         new
                         {
                             Id = 47,
-                            Date_Created = "2025-02-21T23:23:49.6485265+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3073054+00:00",
                             Name = "New Glasgow",
                             TimeZone = "Atlantic Standard Time"
                         },
                         new
                         {
                             Id = 48,
-                            Date_Created = "2025-02-21T23:23:49.6485315+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3073093+00:00",
                             Name = "Dartmouth",
                             TimeZone = "Atlantic Standard Time"
                         },
                         new
                         {
                             Id = 49,
-                            Date_Created = "2025-02-21T23:23:49.6485361+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3073132+00:00",
                             Name = "Halifax",
                             TimeZone = "Atlantic Standard Time"
                         });
@@ -466,7 +469,7 @@ namespace tms.infra.Migrations
                         {
                             Id = -1,
                             Code = "W",
-                            Date_Created = "2025-02-21T23:23:49.6433945+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3047621+00:00",
                             Description = "Railcar equipment is released from origin",
                             Name = "Released"
                         },
@@ -474,7 +477,7 @@ namespace tms.infra.Migrations
                         {
                             Id = -2,
                             Code = "A",
-                            Date_Created = "2025-02-21T23:23:49.6434188+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3047737+00:00",
                             Description = "Railcar equipment arrives at a city on route",
                             Name = "Arrived"
                         },
@@ -482,7 +485,7 @@ namespace tms.infra.Migrations
                         {
                             Id = -3,
                             Code = "D",
-                            Date_Created = "2025-02-21T23:23:49.6434268+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3047777+00:00",
                             Description = "Railcar equipment departs from a city on route",
                             Name = "Departed"
                         },
@@ -490,7 +493,7 @@ namespace tms.infra.Migrations
                         {
                             Id = -4,
                             Code = "Z",
-                            Date_Created = "2025-02-21T23:23:49.6434329+00:00",
+                            Date_Created = "2025-02-21T23:10:51.3047811+00:00",
                             Description = "Railcar equipment is placed at destination",
                             Name = "Placed"
                         });
@@ -511,6 +514,9 @@ namespace tms.infra.Migrations
                     b.Property<int>("Destination_CityId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("Duration")
+                        .HasColumnType("REAL");
+
                     b.Property<DateTimeOffset>("End_Date")
                         .HasColumnType("TEXT");
 
@@ -527,9 +533,6 @@ namespace tms.infra.Migrations
 
                     b.Property<DateTimeOffset>("Start_Date")
                         .HasColumnType("TEXT");
-
-                    b.Property<double>("TotalTripHours")
-                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 

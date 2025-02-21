@@ -43,11 +43,6 @@ public class TripsController : BaseApiController
         var query = new GetAllTripsQuery();
         var result = await _mediator.Send(query);
 
-        if (!result.Any())
-        {
-            return NotFound();
-        }
-
         return Ok(result);
     }
 }

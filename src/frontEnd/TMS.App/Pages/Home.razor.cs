@@ -14,12 +14,23 @@ public partial class Home : ComponentBase
     private List<RailcarTripModel> trips = new();
     private RailcarTripModel selectedTrip;
     private bool isUploading = false;
+    private bool IsLoading = false;
+    private bool loaded = false;
     private string errorMessage;
 
     [Inject]
     public IEventAPIService _EventApiService { get; set; }
     [Inject]
     public NavigationManager NavigationManager { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (loaded) return;
+        IsLoading = true;
+        trips = (await _EventApiService.GetAllTripsAsync()).ToList();
+        loaded = true;
+        IsLoading = false;
+    }
 
     private async Task OnFileUpload(InputFileChangeEventArgs e)
     {
@@ -97,5 +108,5 @@ public partial class Home : ComponentBase
         selectedTrip = trip;
     }
 
-  
+
 }

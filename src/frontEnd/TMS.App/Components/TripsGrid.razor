@@ -1,6 +1,8 @@
 ﻿@using TMS.App.Domain
+@using System.Globalization
 
 @namespace TMS.App.Components
+
 
 @if (trips != null)
 {
@@ -24,11 +26,11 @@
                         <td>@trip.EquipmentId</td>
                         <td>@trip.OriginCity</td>
                         <td>@trip.DestinationCity</td>
-                        <td>@trip.StartDateUtc.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                        <td>@trip.EndDateUtc.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                        <td>@trip.TotalHours.ToString("F2") hours</td>
+                        <td>@trip.StartDateUtc.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)</td>
+                        <td>@trip.EndDateUtc.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)</td>
+                        <td>@FormatTotalHours(trip.TotalHours)</td>
                         <td>
-                            <button class="btn btn-primary" @onclick="() => ViewTripEvents(trip)">View Events</button>
+                            <button class="btn btn-primary" @onclick="() => ViewDetails(trip)">View Events</button>
                         </td>
                     </tr>
                 }
@@ -41,16 +43,14 @@ else
     <div class="alert alert-warning">
         No trips found.
     </div>
-})
-
-
+}
 
 @code {
     [Parameter]
     public List<RailcarTripModel> Trips { get; set; }
 
     [Parameter]
-    public EventCallback<RailcarTripModel> ViewTripEvent { get; set; }
+    public EventCallback<RailcarTripModel> OnViewTripDetailAsync { get; set; }
 
     private List<RailcarTripModel> trips = new List<RailcarTripModel>();
 
@@ -61,16 +61,34 @@ else
         if (Loaded)
             return;
 
-        //Set the Trip parameter to the local trips variable. This prevents the component from re-rendering when the trips parameter is updated.
-
+        // Set the Trip parameter to the local trips variable. This prevents the component from re-rendering when the trips parameter is updated.
         if (Trips != null)
             trips = Trips;
 
         Loaded = true;
     }
-    private async Task ViewTripEvents(RailcarTripModel trip)
+
+    private async Task ViewDetails(RailcarTripModel trip)
     {
-        await ViewTripEvent.InvokeAsync(trip);
+        await OnViewTripDetailAsync.InvokeAsync(trip);
     }
 
+    private string FormatTotalHours(double totalHours)
+    {
+        int hours = (int)totalHours; // Extract the whole hours
+        int minutes = (int)((totalHours - hours) * 60); // Convert the fractional part to minutes
+
+        if (hours == 0)
+        {
+            return $"{minutes} minutes";
+        }
+        else if (minutes == 0)
+        {
+            return $"{hours} hours";
+        }
+        else
+        {
+            return $"{hours} hours {minutes} minutes";
+        }
+    }
 }

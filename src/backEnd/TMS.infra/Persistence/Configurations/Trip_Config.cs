@@ -37,10 +37,7 @@ public class Trip_Config : BaseEntityConfiguration<Trip, long>
         //builder.Property(t => t.Duration)
         //    .HasComputedColumnSql("DATEDIFF_BIG(MINUTE, Start_Date AT TIME ZONE 'UTC', End_Date AT TIME ZONE 'UTC')", stored: true);
 
-        /* For SQL LITE - Store duration in hours*/
-        builder.Property(t => t.Duration)
-    .HasComputedColumnSql("CAST((julianday(End_Date || ' UTC') - julianday(Start_Date || ' UTC')) * 24 AS INTEGER)",
-        stored: true);
+
 
     }
 }

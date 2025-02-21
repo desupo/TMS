@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "frontEnd\\TMS.App\\TMS.App.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "backEnd\\TMS.host\\TMS.host.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
