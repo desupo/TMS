@@ -25,11 +25,17 @@ public partial class Home : ComponentBase
 
     protected override async Task OnParametersSetAsync()
     {
-        if (loaded) return;
+        if (IsLoading) return;
+        await GetData();
+    }
+
+    private async Task GetData()
+    {
+        loaded = false;
         IsLoading = true;
         trips = (await _EventApiService.GetAllTripsAsync()).ToList();
-        loaded = true;
         IsLoading = false;
+        loaded = true;
     }
 
     private async Task OnFileUpload(InputFileChangeEventArgs e)
@@ -46,7 +52,7 @@ public partial class Home : ComponentBase
             await _EventApiService.UploadEventsAsync(formFile);
 
             // Refresh the trips list
-            trips = (await _EventApiService.GetAllTripsAsync()).ToList();
+            await GetData();
         }
         catch (Exception ex)
         {
