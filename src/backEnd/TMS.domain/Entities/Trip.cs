@@ -10,8 +10,7 @@ public class Trip : BaseEntity<long>
     public int Destination_CityId { get; set; }
     public DateTimeOffset Start_Date { get; set; }
     public DateTimeOffset End_Date { get; set; }
-    //Computed field. ReadOnly
-    public TimeSpan Duration { get; private set; }
+    public double TotalTripHours { get; set; }
     /// <summary>
     /// This will be true if the trip has any missing code or misplaced code
     /// </summary>

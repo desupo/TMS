@@ -1,0 +1,80 @@
+﻿@page "/trip-events/{tripId}"
+@using System.Text.Json
+@using TMS.App.Domain
+@using TMS.App.Services
+
+@inject IEventAPIService EquipmentEventApiService
+@inject NavigationManager NavigationManager
+
+<h3>Trip Detail</h3>
+@if (isLoading)
+{
+    <div class="alert alert-info">
+        <i class="fas fa-spinner fa-spin"></i> Loading trip details...
+    </div>
+}
+else if (trip != null)
+{
+    <div>
+        <h4>Equipment ID: @trip.EquipmentId</h4>
+        <p>Origin: @trip.OriginCity</p>
+        <p>Destination: @trip.DestinationCity</p>
+        <p>Start Date/Time (UTC): @trip.StartDateUtc.ToString("yyyy-MM-dd HH:mm:ss")</p>
+        <p>End Date/Time (UTC): @trip.EndDateUtc.ToString("yyyy-MM-dd HH:mm:ss")</p>
+        <p>Total Trip Hours: @trip.TotalHours.ToString("F2") hours</p>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Event Code</th>
+                <th>Event Time (UTC)</th>
+                <th>City</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var evt in trip.Events)
+            {
+                <tr>
+                    <td>@evt.EventCode</td>
+                    <td>@evt.EventTimeUtc.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@evt.City</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning">
+        Trip not found or specified. <a href="/" class="alert-link">Click here</a> to go back to the trips page.
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public long TripId { get; set; }
+    private bool isLoading = true;
+    private RailcarTripModel? trip;
+
+    protected override void OnInitialized()
+    {
+        // Retrieve the serialized trip data from HistoryEntryState
+        var tripJson = NavigationManager.HistoryEntryState as string;
+
+        if (!string.IsNullOrEmpty(tripJson))
+        {
+            trip = JsonSerializer.Deserialize<RailcarTripModel>(tripJson); // Deserialize the JSON string
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // If the trip is not provided via state, fetch it using the TripId
+        if (trip == null)
+        {
+            trip = await EquipmentEventApiService.GetTripAsync(TripId);
+        }
+    }
+}

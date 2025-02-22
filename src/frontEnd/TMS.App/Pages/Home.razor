@@ -1,7 +1,43 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using TMS.App.Domain
+@using TMS.App.Services
+@using TMS.App.Components
 
-<PageTitle>Home</PageTitle>
+@inject HttpClient Http
 
-<h1>Hello, world!</h1>
+<h3>Railcar Trips</h3>
 
-Welcome to your new app.
+<!-- File Upload Section -->
+<div class="mb-3">
+    <InputFile type="file" OnChange="@OnFileUpload" accept=".csv" />
+</div>
+
+<!-- Loading Indicator -->
+@if (isUploading)
+{
+    <div class="alert alert-info">
+        <i class="fas fa-spinner fa-spin"></i> Uploading file, please wait...
+    </div>
+}
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+<!-- Trips Grid -->
+@if (IsLoading)
+{
+    <div class="alert alert-info">
+        <i class="fas fa-spinner fa-spin"></i> Loading trips...
+    </div>
+}
+else if (trips != null)
+{
+    <TripsGrid trips="@trips" OnViewTripDetailAsync="@ViewTripEvents" />
+}
+else
+{
+    <div class="alert alert-info">
+        No trips to display.
+    </div>
+}
