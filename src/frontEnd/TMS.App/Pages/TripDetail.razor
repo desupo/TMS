@@ -1,4 +1,4 @@
-﻿@page "/trip-events/{tripId}"
+﻿@page "/trip-events/{TripId}"
 @using System.Text.Json
 @using TMS.App.Domain
 @using TMS.App.Services
@@ -6,55 +6,93 @@
 @inject IEventAPIService EquipmentEventApiService
 @inject NavigationManager NavigationManager
 
-<h3>Trip Detail</h3>
+<!-- Back to Trips Button -->
+<div class="mb-4">
+    <button class="btn btn-outline-primary" @onclick="NavigateToTrips">
+        <i class="fas fa-arrow-left"></i> Back to Trips
+    </button>
+</div>
+
+<h3 class="mb-4">Trip Details</h3>
+
 @if (isLoading)
 {
-    <div class="alert alert-info">
-        <i class="fas fa-spinner fa-spin"></i> Loading trip details...
+    <!-- Loading Spinner -->
+    <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
 }
 else if (trip != null)
 {
-    <div>
-        <h4>Equipment ID: @trip.EquipmentId</h4>
-        <p>Origin: @trip.OriginCity</p>
-        <p>Destination: @trip.DestinationCity</p>
-        <p>Start Date/Time (UTC): @trip.StartDateUtc.ToString("yyyy-MM-dd HH:mm:ss")</p>
-        <p>End Date/Time (UTC): @trip.EndDateUtc.ToString("yyyy-MM-dd HH:mm:ss")</p>
-        <p>Total Trip Hours: @trip.TotalHours.ToString("F2") hours</p>
+    <!-- Trip Details Card -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-train"></i> Trip Summary
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-2"><strong>Equipment ID:</strong> @trip.EquipmentId</p>
+                    <p class="mb-2"><strong>Origin:</strong> @trip.OriginCity</p>
+                    <p class="mb-2"><strong>Destination:</strong> @trip.DestinationCity</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="mb-2"><strong>Start Date/Time (UTC):</strong> @trip.StartDateUtc.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                    <p class="mb-2"><strong>End Date/Time (UTC):</strong> @trip.EndDateUtc.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                    <p class="mb-2"><strong>Total Trip Hours:</strong> @FormatTotalHours(trip.TotalHours)</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Event Code</th>
-                <th>Event Time (UTC)</th>
-                <th>City</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var evt in trip.Events)
-            {
-                <tr>
-                    <td>@evt.EventCode</td>
-                    <td>@evt.EventTimeUtc.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>@evt.City</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <!-- Events Table -->
+    <div class="card">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-list"></i> Events
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Event Code</th>
+                            <th>Event Time (UTC)</th>
+                            <th>City</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var evt in trip.Events)
+                        {
+                            <tr>
+                                <td>@evt.EventCode</td>
+                                <td>@evt.EventTimeUtc.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td>@evt.City</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 }
 else
 {
+    <!-- Trip Not Found Message -->
     <div class="alert alert-warning">
-        Trip not found or specified. <a href="/" class="alert-link">Click here</a> to go back to the trips page.
+        <i class="fas fa-exclamation-triangle"></i> Trip not found or specified. <a href="/" class="alert-link">Click here</a> to go back to the trips page.
     </div>
 }
 
 @code {
-
     [Parameter]
-    public long TripId { get; set; }
+    public string TripId { get; set; } // Changed to string
+
     private bool isLoading = true;
     private RailcarTripModel? trip;
 
@@ -74,7 +112,42 @@ else
         // If the trip is not provided via state, fetch it using the TripId
         if (trip == null)
         {
-            trip = await EquipmentEventApiService.GetTripAsync(TripId);
+            // Parse TripId as long
+            if (long.TryParse(TripId, out var tripId))
+            {
+                trip = await EquipmentEventApiService.GetTripAsync(tripId);
+            }
+            else
+            {
+                // Handle invalid TripId
+                Console.WriteLine("Invalid TripId");
+            }
+        }
+
+        isLoading = false;
+    }
+
+    private void NavigateToTrips()
+    {
+        NavigationManager.NavigateTo("/"); // Navigate back to the trips list page
+    }
+
+    private string FormatTotalHours(double totalHours)
+    {
+        int hours = (int)totalHours; // Extract the whole hours
+        int minutes = (int)((totalHours - hours) * 60); // Convert the fractional part to minutes
+
+        if (hours == 0)
+        {
+            return $"{minutes} minutes";
+        }
+        else if (minutes == 0)
+        {
+            return $"{hours} hours";
+        }
+        else
+        {
+            return $"{hours} hours {minutes} minutes";
         }
     }
 }
